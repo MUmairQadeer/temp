@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import {  useRef } from "react";
 import "./Faq.css";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";

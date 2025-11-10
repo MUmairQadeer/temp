@@ -5,9 +5,7 @@ import PromoVideo from './Promo.mp4';
 // Words for the typing effect
 const TYPING_WORDS = ["Pitch", "Speech", "Presentation", "Moment", "Talk"];
 // Placeholder assets
-const VIDEO_URL = "https://example.com/placeholder-video.mp4";
-const THUMBNAIL_URL = "https://placehold.co/1280x720/1a1a2e/ffffff?text=Video+Placeholder";
-// Colors
+
 const PURPLE_COLOR = "#667eea"; // Accent color for text
 
 // --- Typing Effect Component ---

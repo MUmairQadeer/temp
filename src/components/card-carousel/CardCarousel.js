@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+// import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "./CardCarousel.css";
 import CostIC from "./cost-of-miscommunication.png";
 import RelentionIC from "./employee-retention.png";
