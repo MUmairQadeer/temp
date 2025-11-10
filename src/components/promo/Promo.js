@@ -1,12 +1,15 @@
-import React, { useRef, useState, useEffect } from "react";
+import  { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import PromoVideo from './Promo.mp4';
+import PromoVideo from './Promo.mp4'
 // --- Config ---
 // Words for the typing effect
 const TYPING_WORDS = ["Pitch", "Speech", "Presentation", "Moment", "Talk"];
-// Placeholder assets
-
-const PURPLE_COLOR = "#667eea"; // Accent color for text
+// Placeholder video
+const PROMO_VIDEO_URL = "https://dummy-videos.com/video/media/1920x1080-space/small/dummy-video-small.mp4";
+// Accent color
+const PURPLE_COLOR = "#667eea";
+// Default font stack
+const FONT_FAMILY = 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"';
 
 // --- Typing Effect Component ---
 const TypingEffect = () => {
@@ -95,7 +98,7 @@ export default function CinematicPromo() {
     [0, 0.6] // 60% dark overlay for readability
   );
 
-  // NEW: Opacity for sliding text to prevent pre-animation visibility
+  // 4. Opacity for sliding text to prevent pre-animation visibility
   const textSlideOpacity = useTransform(
     scrollYProgress,
     // Start fade-in just as the slide starts
@@ -103,16 +106,14 @@ export default function CinematicPromo() {
     [0, 1] // Go from 0 to 1 opacity
   );
 
-  // 4. "It's Time" (Slides from left)
-  // REMOVED Y-TRANSFORM
+  // 5. "It's Time" (Slides from left)
   const textTopX = useTransform(
     scrollYProgress,
     [SLIDE_TEXT_ANIMATION_START, SLIDE_TEXT_ANIMATION_END],
     ["-100%", "0%"]
   );
 
-  // 5. "To Level Up." (Slides from right)
-  // REMOVED Y-TRANSFORM
+  // 6. "To Level Up." (Slides from right)
   const textBottomX = useTransform(
     scrollYProgress,
     [SLIDE_TEXT_ANIMATION_START, SLIDE_TEXT_ANIMATION_END],
@@ -129,32 +130,18 @@ export default function CinematicPromo() {
 
   return (
     <>
-      {/* --- Styles and Tailwind Import --- */}
-      <style>{`
-        /* Load Tailwind CSS */
-        @import url('https://cdn.tailwindcss.com/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
-        
-        /* Set a default font */
-        body { 
-          font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-        }
-        
-        /* Custom background gradient */
-        .promo-background {
-          background: linear-gradient(180deg, #000000 20%, #2a2a4e 100%);
-        }
-
-        /* Custom text color */
-        .text-promo-purple {
-          color: ${PURPLE_COLOR};
-        }
-      `}</style>
-
       {/* 1. The Scroll Track (300vh height drives the animation) */}
-      <div ref={targetRef} className="h-[300vh] relative">
+      <div 
+        ref={targetRef} 
+        className="h-[300vh] relative"
+        style={{ fontFamily: FONT_FAMILY }} // Apply default font
+      >
 
         {/* 2. The Sticky Stage (Holds all animated elements) */}
-        <div className="sticky top-0 h-screen w-full overflow-hidden promo-background">
+        <div 
+          className="sticky top-0 h-screen w-full overflow-hidden"
+          style={{ background: 'linear-gradient(180deg, #000000 20%, #2a2a4e 100%)' }} // Apply background
+        >
 
           {/* --- Initial Hero Text --- */}
           <motion.div
@@ -178,17 +165,16 @@ export default function CinematicPromo() {
             }}
             className="absolute top-0 w-full h-full flex items-center justify-center will-change-transform"
           >
-            {/* This inner div is what scales, ensuring it fills the h-screen sticky parent.
-              ADDED overflow-hidden to mask the sliding text.
-            */}
+            {/* This inner div is what scales, ensuring it fills the h-screen sticky parent. */}
             <div className="relative w-full h-full overflow-hidden">
               
               {/* Video Element */}
               <video
                 ref={videoRef}
                 className="w-full h-full object-cover"
-                // poster={THUMBNAIL_URL}
                 controls={!showPlayButton} // Show controls after play
+                playsInline // Good for mobile
+                muted // Often needed for autoplay
               >
                 <source src={PromoVideo} type="video/mp4" />
                 Your browser does not support HTML video.
@@ -213,21 +199,22 @@ export default function CinematicPromo() {
               )}
 
               {/* --- Sliding Text (NOW INSIDE THE CARD) --- */}
-              {/* This container will be masked by the parent's overflow:hidden */}
               <div className="absolute inset-0 z-20 pointer-events-none">
                 
-                {/* "It's Time" (Slides from left) */}
+                {/* "It's Time" (Slides from left) 
+                    --- MODIFIED: Increased top margin ---
+                */}
                 <motion.h2
-                  style={{ x: textTopX, opacity: textSlideOpacity }}
-                  className="absolute top-8 left-8 md:top-12 md:left-12 text-promo-purple text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-bold will-change-transform whitespace-nowrap"
+                  style={{ x: textTopX, opacity: textSlideOpacity, color: PURPLE_COLOR }}
+                  className="absolute top-20 left-8 md:top-24 md:left-12 text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-bold will-change-transform whitespace-nowrap"
                 >
                   It’s Time
                 </motion.h2>
 
                 {/* "To Level Up." (Slides from right) */}
                 <motion.h2
-                  style={{ x: textBottomX, opacity: textSlideOpacity }}
-                  className="absolute bottom-8 right-8 md:bottom-12 md:right-12 text-promo-purple text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-bold will-change-transform whitespace-nowrap"
+                  style={{ x: textBottomX, opacity: textSlideOpacity, color: PURPLE_COLOR }}
+                  className="absolute bottom-8 right-8 md:bottom-12 md:right-12 text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-bold will-change-transform whitespace-nowrap"
                 >
                   To Level Up
                 </motion.h2>
@@ -235,8 +222,6 @@ export default function CinematicPromo() {
               </div>
             </div>
           </motion.div>
-
-          {/* --- Sliding Text (REMOVED FROM HERE) --- */}
           
         </div>
       </div>

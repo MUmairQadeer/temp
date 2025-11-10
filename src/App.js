@@ -34,10 +34,10 @@ function App() {
       <CardScroll />
       <ClientCarousel />
       <CardCarousel />
-      <VideoService />
+      {/* <VideoService /> */}
       <div className="bwg-main-container-wrapper">
         <div className="bwg-main-container-wrapper-bg"></div>
-        <BeforeWeBegin />
+        {/* <BeforeWeBegin /> */}
         <BeforeWeBeginCard />
       </div>
       <Book />

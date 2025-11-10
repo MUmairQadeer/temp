@@ -79,13 +79,15 @@ function HeroSection() {
         >
             <div className="max-w-4xl mx-auto px-6 py-24 md:py-32">
                 <motion.h1
-                    className="text-3xl sm:text-5xl md:text-6xl font-bold leading-tight" 
+                    // --- CHANGED: Removed 'leading-loose' class ---
+                    className="text-3xl sm:text-5xl md:text-6xl font-bold" 
                     // Apply gradient as background, clip to text, and make text color transparent
                     style={{
                         backgroundImage: colors.headText,
                         WebkitBackgroundClip: 'text', // For cross-browser compatibility
                         backgroundClip: 'text',
                         color: 'transparent',
+                        lineHeight: 1.2, // Added a base line-height
                     }}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -93,7 +95,8 @@ function HeroSection() {
                 >
                     Better Results.
                     <br />
-                    Less Time.
+                    {/* --- CHANGED: Added span with responsive margin-top --- */}
+                    <span className="inline-block mt-3 sm:mt-4 md:mt-5">Less Time.</span>
                 </motion.h1>
                 <motion.p
                     className="text-base sm:text-lg md:text-xl mt-6 text-gray-200" // Responsive text
