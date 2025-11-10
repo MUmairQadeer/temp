@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import { motion } from 'framer-motion'; // No new imports needed
+import { motion } from 'framer-motion';
 
 // --- IMPORT YOUR LOCAL VIDEOS ---
 import video1 from './1.mp4';
@@ -58,11 +58,13 @@ const servicesData = [
   }
 ];
 
-// --- Main App Component (Unchanged) ---
+// --- Main App Component ---
 export default function App() {
   const [activeIndex, setActiveIndex] = useState(null);
 
-  const titleHeight = "80px";
+  // This height defines the visible area of the *inactive* card.
+  // It MUST match the height given to the <h3> element below.
+  const titleHeight = "120px";
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen w-full bg-[#0d0d19] p-4 sm:p-10">
@@ -86,7 +88,7 @@ export default function App() {
   );
 }
 
-// --- ServicePanel Component (CHANGED) ---
+// --- ServicePanel Component ---
 function ServicePanel({ service, isActive, onHover, titleHeight }) {
   
   const panelVariants = {
@@ -94,17 +96,17 @@ function ServicePanel({ service, isActive, onHover, titleHeight }) {
     active: { flex: 2.5 }
   };
 
+  // This variant slides the whole content block up
   const contentVariants = {
     inactive: { y: `calc(100% - ${titleHeight})` },
     active: { y: 0 }
   };
 
-  // --- NEW VARIANTS ---
-  // Define variants for the description and bullet points
-  const textVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0 }
-  };
+  // This variant fades the description/bullets
+  const textVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 }
+  };
 
   return (
     <motion.div
@@ -116,7 +118,7 @@ function ServicePanel({ service, isActive, onHover, titleHeight }) {
       onMouseEnter={onHover}
       onClick={onHover}
     >
-      {/* Video Background (Unchanged) */}
+      {/* Video Background */}
       <div
         className="absolute inset-0 z-0"
       >
@@ -133,32 +135,36 @@ function ServicePanel({ service, isActive, onHover, titleHeight }) {
 
       {/* Text Content Container (Slides up) */}
       <motion.div
-        className="absolute bottom-0 left-0 right-0 z-20 p-4 sm:p-6 text-white h-full"
-        style={{ overflowY: isActive ? 'auto' : 'hidden' }}
+        // --- CHANGED: Removed all padding, added flex ---
+        className="absolute bottom-0 left-0 right-0 z-20 text-white h-full flex flex-col"
+        style={{ overflowY: 'hidden' }}
         variants={contentVariants}
         transition={{ duration: 0.5, ease: "easeInOut" }}
-  s   >
-      {/* Heading (Always visible at the top of the sliding container) */}
-        <h3 className="text-2xl sm:text-3xl font-bold mb-6" style={{ minHeight: '40px' }}>
+      >
+        {/* --- CHANGED: Heading now has fixed height and centers text --- */}
+        <h3 
+          className="text-2xl sm:text-3xl font-bold w-full text-center flex items-center justify-center shrink-0" 
+          style={{ height: titleHeight }}
+        >
           {service.title}
         </h3>
         
-        {/* --- CHANGED: Wrapped "remaining text" in a motion.div --- */}
-      {/* This content now fades in on hover and fades out on blur */}
+        {/* --- CHANGED: Fading content has padding added back --- */}
         <motion.div
-          className="space-y-4 pr-2"
-          initial="hidden"
-          animate={isActive ? "visible" : "hidden"}
-          variants={textVariants}
-          transition={{ duration: 0.5, delay: isActive ? 0.2 : 0 }} // Add delay on fade-in
-        >
+          className="space-y-4 p-4 sm:p-6" 
+          initial="hidden"
+          animate={isActive ? "visible" : "hidden"}
+          variants={textVariants}
+          transition={{ duration: 0.5, delay: isActive ? 0.2 : 0 }}
+        >
           <p className="text-base sm:text-lg">{service.description}</p>
-          <ul className="list-disc list-inside space-y-3 text-base sm:text-lg">
-s           {service.points.map((point, i) => (
+          
+          <ul className="list-disc list-outside space-y-5 text-base sm:text-lg ml-5">
+            {service.points.map((point, i) => (
               <li key={i}>{point}</li>
             ))}
           </ul>
-        </motion.div>
+.       </motion.div>
       </motion.div>
     </motion.div>
   );
