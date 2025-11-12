@@ -23,7 +23,7 @@ const featureData = [
             'No wasted time. Every minute is focused entirely on you—your challenges, your goals, and your dream outcome.',
             'Speeches ready in days, not weeks.',
         ],
-        videoSrc: 'https://videos.pexels.com/video-files/3846537/3846537-hd_1280_720_30fps.mp4',
+        videoSrc: './1.mp4',
     },
     {
         title: 'Simpler',
@@ -32,7 +32,7 @@ const featureData = [
             'Friendly, personal VIP care that supports you every step of the way.',
             'Nothing left to chance—clear, actionable advice on your content, clarity, deliverable, and more.',
         ],
-        videoSrc: 'https://videos.pexels.com/video-files/3209828/3209828-hd_1280_720_25fps.mp4',
+        videoSrc: './2.mp4',
     },
     {
         title: 'Better',
@@ -41,7 +41,7 @@ const featureData = [
             '1-on-1 VIP service means speeches and solutions specifically tailored to your style, personality, audience, and goals.',
             'Combining real-time expert feedback with extensive tools and resources for truly transformative results.',
         ],
-        videoSrc: 'https://videos.pexels.com/video-files/2882230/2882230-hd_1280_720_24fps.mp4',
+        videoSrc: './3.mp4',
     },
 ];
 
