@@ -1,205 +1,239 @@
-/* Final Section */
 :root {
-  --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --accent-color-1: #667eea;
-  --accent-color-2: #764ba2;
+  --accent1: #667eea;
+  --accent2: #764ba2;
+  --bg: linear-gradient(180deg, #000000 20%, #6d5bb9 100%);
+  --active-color: #667eea; 
+  --muted: #ccc;
+  --muted-strong: rgba(255, 255, 255, 0.92);
 }
 
-/* Section Styling */
-.bwgc-section {
-  min-height: 80vh;
-  width: 100%;
-  position: relative;
-  flex-direction: column;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 1.5rem;
-  overflow: hidden;
-}
-
-@media (min-width: 768px) {
-  .bwgc-section {
-    min-height: 100vh;
-    padding: 5rem 2rem;
-  }
-}
-
-.bwgc-final-section {
+.bwgc-lock-wrapper {
+  background: var(--bg);
   color: #fff;
-  background: #000;
-  background: linear-gradient(180deg, #000000 20%, #6d5bb9 100%);
-  z-index: 3;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.bwgc-final-container {
-  max-width: 1400px;
-  width: 100%;
-  margin: 0 auto;
-  display: grid;
-
-  grid-template-columns: 1fr;
-  gap: 4rem;
+.bwgc-sticky-container {
+  position: sticky;
+  /* --- PAUSE EARLIER --- */
+  top: 10vh; 
+  height: 90vh; /* Fill remaining screen */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
+  padding: 2rem;
+  box-sizing: border-box;
 }
 
-.bwgc-final-content-title {
-  font-size: clamp(2rem, 5vw, 4rem);
+.bwgc-title {
+  font-size: clamp(2.4rem, 6vw, 4rem);
   font-weight: 900;
-  background: var(--accent-gradient);
+  margin: 0 0 2rem 0;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--accent1), var(--accent2));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-clip: text;
-  /* opacity: 0;
-  transform: translateY(20px); */
+  text-align: center;
 }
 
-.bwgc-client-types {
-  /* opacity: 0;
-  transform: translateY(20px); */
-  list-style: none;
-}
-
-.bwgc-client-type {
-  padding: 0.5rem 0 0.5rem 1rem;
-  font-size: clamp(1.2rem, 2vw, 1.5rem);
-  font-weight: 700;
-  color: rgb(217, 217, 217);
-  cursor: pointer;
-  transition: color 0.4s ease;
-  /* GSAP will handle transform */
-  position: relative;
-  top: 3rem;
-  border-left: 4px solid transparent;
-}
-
-.bwgc-client-type.bwgc-active {
-  color: var(--accent-color-1);
-  border-left-color: var(--accent-color-1);
-}
-
-.bwgc-client-content-mobile {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.8);
-  padding: 1rem 0;
-}
-
-.bwgc-client-content-wrapper-mobile {
-  /* height: 0; */
-  overflow: hidden;
-}
-
-.bwgc-client-content-mobile p:not(:last-child) {
-  margin-bottom: 0.5rem;
-}
-
-.bwgc-client-image-mobile {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-}
-
-.bwgc-client-image-container {
-  position: relative;
-  width: 100%;
-  /* height: 300px; */
-  overflow: hidden;
-}
-
-.bwgc-client-image {
-  border-radius: 15px;
-  width: 100%;
-  height: 300px;
-  object-fit: cover;
-}
-
-.bwgc-client-description {
-  position: relative;
-}
-
-.bwgc-client-content-wrapper-desktop {
-  display: none;
-}
-
-.bwgc-client-text h3 {
-  font-weight: 700;
-  font-size: 1.5rem;
-  color: var(--accent-color-1);
-  margin: 0.5rem 0 1rem;
-}
-
-.bwgc-client-text p {
-  font-size: 1.1rem;
-  line-height: 1.6;
-  margin-bottom: 1rem;
-  overflow: hidden;
-}
-
-.bwgc-client-text p .line-inner {
-  display: block;
-}
-
-.bwgc-client-text .highlight {
-  color: #ff8b8b;
-}
-
-.bwgc-preloader {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #000;
-  z-index: 10000;
+/* ---------- Layout ---------- */
+.bwgc-layout {
+  width: 92%;
+  max-width: 1240px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  gap: 2.5rem;
+  align-items: stretch;
+  height: 100%;
+  max-height: 650px;
 }
 
-.bwgc-loading-text {
-  font-size: 2rem;
+/* ---------- Left list ---------- */
+.bwgc-list {
+  flex: 0 0 40%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  align-items: flex-start;
+  justify-content: space-between;
+  height: 100%;
+}
+
+/* --- The LI (container) now handles the border/line --- */
+.bwgc-item-container {
+  list-style: none;
+  width: 100%;
+  position: relative;
+  padding-left: 1.5rem; 
+  cursor: pointer;
+  transition: height 0.3s ease; /* For mobile line */
+}
+
+/* Title Styling */
+.bwgc-item {
+  font-size: clamp(1.25rem, 2vw, 1.8rem);
+  font-weight: 700;
+  color: var(--muted);
+  line-height: 1.15;
+  transition: color 220ms ease, transform 220ms ease;
+  text-align: left;
+  padding: 0.5rem 0;
+}
+
+/* Hover effect on Title */
+.bwgc-item:hover {
+  transform: translateX(3px);
   color: #fff;
 }
 
-.bwgc-client-content-desktop {
-  display: none;
-  min-height: 70vh;
+/* --- The Vertical Line --- */
+.bwgc-item-container::before {
+  content: "";
+  position: absolute;
+  left: 0.2rem;
+  top: 6%;
+  bottom: 6%;
+  width: 3px;
+  border-radius: 6px;
+  background: transparent;
+  transition: background 220ms ease, top 220ms ease, bottom 220ms ease, height 220ms ease;
 }
 
-@media (min-width: 768px) {
-  .bwgc-client-type {
-    padding: 1rem 0 1rem 2rem;
-  }
+/* When Active: Show Line & Change Title Color */
+.bwgc-item-container.active::before {
+  background: var(--active-color);
 }
 
-@media (min-width: 1000px) {
-  .bwgc-final-container {
-    grid-template-columns: 40% 50%;
-    align-items: start;
+.bwgc-item-container.active .bwgc-item {
+  color: var(--active-color);
+}
+
+/* ---------- Right display (Desktop) ---------- */
+.bwgc-display {
+  flex: 0 0 60%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.bwgc-card {
+  width: 100%;
+  max-width: 620px;
+}
+
+.bwgc-image {
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  border-radius: 14px;
+  display: block;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55);
+  margin-bottom: 1rem;
+}
+
+.bwgc-text h3 {
+  color: var(--active-color);
+  font-size: clamp(1.4rem, 2vw, 2rem);
+  font-weight: 900;
+  margin: 0 0 0.8rem 0;
+  line-height: 1.05;
+}
+
+.bwgc-text p {
+  color: var(--muted-strong);
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  line-height: 1.6;
+  margin: 0 0 0.8rem 0;
+  text-align: left;
+}
+
+/* --- Mobile Content Wrapper --- */
+.bwgc-mobile-content-wrapper {
+  display: none; /* Hidden on desktop */
+  width: 100%;
+}
+
+.bwgc-mobile-card-content {
+  padding-top: 1rem;
+  padding-bottom: 0.5rem;
+}
+
+/* ---------- Mobile Media Query ---------- */
+@media (max-width: 768px) {
+  .bwgc-sticky-container {
+    padding: 1.5rem 1rem;
+    height: 100vh;
+    overflow-y: auto;
+    justify-content: flex-start;
+    /* --- ALLOW STICKY BEHAVIOR ON MOBILE --- */
+    top: 0;
   }
 
-  .bwgc-final-content-title {
-    margin-bottom: 2rem;
-  }
+  /* Hide desktop right panel */
+  .bwgc-display { display: none; }
 
-  .bwgc-client-content-wrapper-mobile {
-    display: none;
-  }
+  /* Show mobile content */
+  .bwgc-mobile-content-wrapper { display: block; }
 
-  .bwgc-client-content-wrapper-desktop {
-    display: block;
-  }
-
-  .bwgc-final-content {
-    position: relative;
-  }
-
-  .bwgc-client-types {
-    position: absolute;
-    top: -3rem;
-    left: 0;
+  .bwgc-layout {
+    flex-direction: column;
+    gap: 0;
     width: 100%;
-    height: 100%;
+    height: auto;
+    max-height: none;
+  }
+
+  .bwgc-list {
+    width: 100%;
+    height: auto;
+    gap: 0.8rem;
+    padding-left: 0.5rem;
+    justify-content: flex-start;
+  }
+
+  .bwgc-item-container {
+    padding-left: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* --- MOBILE LINE --- */
+  .bwgc-item-container::before {
+    top: 0;
+    bottom: auto;
+    height: 100%; /* Spans full height of LI */
+    left: 0.4rem;
+    width: 2.5px;
+  }
+  
+  /* Hide line on inactive items */
+  .bwgc-item-container:not(.active)::before {
+    background: transparent;
+  }
+
+  .bwgc-item {
+    font-size: 1.3rem;
+    padding: 0.2rem 0;
+  }
+
+  .bwgc-image {
+    height: 200px;
+    margin-bottom: 1rem;
+  }
+  
+  .bwgc-mobile-card-content .bwgc-text p {
+     font-size: 0.95rem;
+     line-height: 1.5;
+     margin-bottom: 0.8rem;
+  }
+
+  /* Remove paragraph margin from mobile card */
+  .bwgc-mobile-card-content .bwgc-text p:last-child {
+    margin-bottom: 0.2rem;
   }
 }
-

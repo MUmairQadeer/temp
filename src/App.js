@@ -35,11 +35,11 @@ function App() {
       <ClientCarousel />
       <CardCarousel />
       {/* <VideoService /> */}
-      <div className="bwg-main-container-wrapper">
-        <div className="bwg-main-container-wrapper-bg"></div>
+      {/* <div className="bwg-main-container-wrapper"> */}
+        {/* <div className="bwg-main-container-wrapper-bg"></div> */}
         {/* <BeforeWeBegin /> */}
         <BeforeWeBeginCard />
-      </div>
+      {/* </div> */}
       <Book />
       <div className="end-content-wrapper">
         <div className="end-content-background-circle"></div>

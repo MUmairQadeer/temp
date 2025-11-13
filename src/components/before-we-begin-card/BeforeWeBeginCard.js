@@ -1,6 +1,8 @@
 import { useRef, useState, useEffect } from "react";
-import { motion, AnimatePresence, useInView } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import "./BeforeWeBeginCard.css";
+
+// --- Images (Assuming imports are set up) ---
 import Corporate from "./corporate.jpg";
 import Ted from "./ted-style.jpg";
 import Entrepreneurs from "./founder.jpg";
@@ -76,141 +78,137 @@ const clientTypes = [
 ];
 
 export default function BeforeWeBeginCard() {
-  const [clientActive, setClientActive] = useState(0);
-  const ref = useRef(null);
-  const isInView = useInView(ref, { amount: 0.5, once: true });
+  const [active, setActive] = useState(0);
+  const scrollContainer = useRef(null);
 
-  // Refs for each client list item
-  const itemRefs = useRef([]);
-
-  // Scroll detection logic
-  // This logic automatically drives the active client based on which 
-  // item is closest to the center of the viewport (or sticky container's center).
   useEffect(() => {
-    const handleScroll = () => {
-      let closestIdx = 0;
-      let closestDistance = Infinity;
-      
-      // Calculate the center of the viewport
-      const viewportCenter = window.innerHeight / 2;
+    const el = scrollContainer.current;
+    if (!el) return;
 
-      itemRefs.current.forEach((el, idx) => {
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          // Distance from the item's top edge to the center of the viewport
-          const distance = Math.abs(rect.top - viewportCenter);
-          if (distance < closestDistance) {
-            closestDistance = distance;
-            closestIdx = idx;
-          }
-        }
-      });
+    const totalCards = clientTypes.length;
 
-      setClientActive((prev) => (prev !== closestIdx ? closestIdx : prev));
+    // --- FASTER SCROLL LOGIC ---
+    // Each card will take 0.5 (50%) of a viewport-height-scroll
+    const SCROLL_PER_CARD = 0.5;
+    
+    // Total distance the user will scroll *while locked*
+    const totalScrollDistance = window.innerHeight * totalCards * SCROLL_PER_CARD;
+    
+    // Total height of the wrapper (scroll distance + 1 screen for the component)
+    const totalWrapperHeight = totalScrollDistance + window.innerHeight;
+
+    el.style.height = `${totalWrapperHeight}px`;
+    // --- END LOGIC ---
+
+    const onScroll = () => {
+      const rect = el.getBoundingClientRect();
+      if (!rect) return;
+
+      const scrollableHeight = totalWrapperHeight - window.innerHeight;
+
+      const progress = Math.min(
+        Math.max(-rect.top / scrollableHeight, 0),
+        1
+      );
+
+      const index = Math.floor(progress * totalCards);
+      setActive(Math.min(index, totalCards - 1));
+
+      const lock = rect.top <= 0 && rect.bottom >= window.innerHeight;
+      if (document.body) {
+        document.body.style.overflow = lock ? "hidden" : "auto";
+      }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (document.body) {
+        document.body.style.overflow = "auto";
+      }
+    };
   }, []);
 
-  const fadeUp = {
-    hidden: { opacity: 0, y: 50 },
-    visible: (delay = 0) => ({
-      opacity: 1,
-      y: 0,
-      transition: { delay, duration: 0.5, ease: "easeOut" },
-    }),
-  };
-
   return (
-    // The main section is ref'd for the fadeUp animation trigger
-    <section ref={ref} className="bwgc-section bwgc-final-section">
-      <motion.h2
-        animate={isInView ? "visible" : "hidden"}
-        variants={fadeUp}
-        className="bwgc-final-content-title"
-      >
-        Are We a Good Fit?
-      </motion.h2>
+    <section ref={scrollContainer} className="bwgc-lock-wrapper">
+      <div className="bwgc-sticky-container">
+        <h2 className="bwgc-title">Are We a Good Fit?</h2>
 
-      {/* bwgc-scroll-driver is the key to the scroll lock effect. 
-          It provides a large vertical space to scroll through. */}
-      <div className="bwgc-scroll-driver">
-        <motion.div
-          animate={isInView ? "visible" : "hidden"}
-          variants={fadeUp}
-          // bwgc-final-container is sticky inside the scroll driver
-          className="bwgc-final-container"
-        >
-          <div className="bwgc-final-content">
-            <ul className="bwgc-client-types">
-              {clientTypes.map((client, idx) => (
-                <li
-                  key={client.key}
-                  // Item refs for scroll position detection
-                  ref={(el) => (itemRefs.current[idx] = el)}
-                  onClick={() => setClientActive(idx)}
-                  className={`bwgc-client-type ${
-                    idx === clientActive ? "bwgc-active" : ""
-                  }`}
-                  data-client={client.key}
+        <div className="bwgc-layout">
+          {/* Left List */}
+          <ul className="bwgc-list">
+            {clientTypes.map((c, i) => (
+              <li
+                key={c.key}
+                // The active class is now on the LI wrapper
+                className={`bwgc-item-container ${i === active ? "active" : ""}`}
+              >
+                {/* Clickable Title */}
+                <div
+                  className="bwgc-item"
+                  onClick={() => setActive(i)}
                 >
-                  {client.title}
-                  {/* Mobile Content (Accordion) */}
-                  <motion.div
-                    animate={idx === clientActive ? "expand" : "collapse"}
-                    initial="collapse"
-                    variants={{
-                      expand: { height: "auto", opacity: 1 },
-                      collapse: { height: 0, opacity: 0 },
-                    }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="bwgc-client-content-wrapper-mobile"
-                  >
-                    <div className="bwgc-client-content-mobile">
-                      {client.paragraphs.map((text, i) => (
-                        <p key={i}>{text}</p>
-                      ))}
-                    </div>
-                    <img
-                      className="bwgc-client-image-mobile"
-                      src={client.image}
-                      alt={client.title}
-                    />
-                  </motion.div>
-                </li>
-              ))}
-            </ul>
-          </div>
+                  {c.title}
+                </div>
 
-          {/* Desktop Content (Image/Text Pane) */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={clientTypes[clientActive].key}
-              className="bwgc-client-content-wrapper-desktop"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
-              <div className="bwgc-client-image-container">
+                {/* --- MOBILE-ONLY CONTENT --- */}
+                <div className="bwgc-mobile-content-wrapper">
+                  <AnimatePresence>
+                    {i === active && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.4, ease: "easeInOut" }}
+                        style={{ overflow: "hidden" }}
+                      >
+                        <div className="bwgc-mobile-card-content">
+                          <img
+                            src={c.image}
+                            alt={c.title}
+                            className="bwgc-image"
+                          />
+                          <div className="bwgc-text">
+                            {/* --- HEADING REMOVED FROM HERE --- */}
+                            {c.paragraphs.map((p, p_i) => (
+                              <p key={p_i}>{p}</p>
+                            ))}
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          {/* Right Content (DESKTOP ONLY) */}
+          <div className="bwgc-display">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={clientTypes[active].key}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.6, ease: "easeInOut" }}
+                className="bwgc-card"
+              >
                 <img
-                  className="bwgc-client-image"
-                  alt={clientTypes[clientActive].title}
-                  src={clientTypes[clientActive].image}
+                  src={clientTypes[active].image}
+                  alt={clientTypes[active].title}
+                  className="bwgc-image"
                 />
-              </div>
-              <div className="bwgc-client-description">
-                <div className="bwgc-client-text">
-                  <h3>{clientTypes[clientActive].title}</h3>
-                  {clientTypes[clientActive].paragraphs.map((text, i) => (
-                    <p key={i}>{text}</p>
+                <div className="bwgc-text">
+                  <h3>{clientTypes[active].title}</h3>
+                  {clientTypes[active].paragraphs.map((p, i) => (
+                    <p key={i}>{p}</p>
                   ))}
                 </div>
-              </div>
-            </motion.div>
-          </AnimatePresence>
-        </motion.div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
       </div>
     </section>
   );
