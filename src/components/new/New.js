@@ -29,7 +29,7 @@ const featureData = [
       "Friendly, personal VIP care that supports you every step of the way.",
       "Nothing left to chance—clear, actionable advice on your content, clarity, deliverable, and more.",
     ],
-    videoSrc: `https://player.vimeo.com/video/1136403548?h=dee998938d${vimeoParams}`,
+    videoSrc: `https://player.vimeo.com/video/1136412134?h=dee998938d${vimeoParams}`,
   },
   {
     title: "Better",
@@ -122,12 +122,12 @@ function StickyScrollFeature() {
     try {
       const p = new Player(iframe, { autopause: false });
       // ensure muted for autoplay
-      p.setVolume(0).catch(() => {});
+      p.setVolume(0).catch(() => { });
       players.current[index] = p;
 
       // If this is the active section, play it immediately on load
       if (index === activeSection) {
-        p.play().catch(() => {});
+        p.play().catch(() => { });
       }
     } catch (err) {
       console.warn("Vimeo Player init error:", err);
@@ -139,9 +139,9 @@ function StickyScrollFeature() {
     players.current.forEach((p, i) => {
       if (!p) return;
       if (i === activeSection) {
-        p.play().catch(() => {});
+        p.play().catch(() => { });
       } else {
-        p.pause().catch(() => {});
+        p.pause().catch(() => { });
       }
     });
   }, [activeSection]);
@@ -181,7 +181,7 @@ function StickyScrollFeature() {
       try {
         // fallback: if getPaused not available, try to call play then pause
         await p.play();
-      } catch {}
+      } catch { }
     }
   };
 
@@ -218,14 +218,17 @@ function StickyScrollFeature() {
 
               <div className="hidden md:block w-fit">
                 <p className="text-xs text-gray-300">All services supported by our money-back 100% satisfaction guarantee.</p>
-                <motion.button
-                  className="font-semibold text-[0.9rem] py-2 px-5 rounded-full mt-4 sm:mt-6 shadow-lg"
+                <motion.a
+                  className="font-semibold text-[0.9rem] py-2 px-5 rounded-full mt-4 sm:mt-6 shadow-lg inline-block"
                   style={{ backgroundImage: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", color: colors.lightText }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  href="https://calendly.com/speak-with-simon/discovery-session"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   Book Your Free Session
-                </motion.button>
+                </motion.a>
               </div>
             </div>
           </div>
@@ -317,16 +320,19 @@ function StickyScrollFeature() {
           </div>
 
           {/* MOBILE BUTTON */}
-          <div className="block md:hidden pt-10 pb-16">
+          <div className="inline-block md:hidden pt-10 pb-16">
             <p className="text-xs text-gray-300">All services supported by our money-back 100% satisfaction guarantee.</p>
-            <motion.button
+            <motion.a
               className="font-semibold text-[0.9rem] py-2 px-5 rounded-full mt-4 shadow-lg w-full"
               style={{ backgroundImage: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", color: colors.lightText }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+                href="https://calendly.com/speak-with-simon/discovery-session"
+                  target="_blank"
+                  rel="noopener noreferrer"
             >
               Book Your Free Session
-            </motion.button>
+            </motion.a>
           </div>
         </div>
       </div>

@@ -1,16 +1,12 @@
-import "./CardScroll.css";
+import React, { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import CardScrollItem from "./CardScrollItem";
-import { useRef } from "react";
-import { useScroll, useTransform, motion } from "framer-motion";
 
 import Card1 from "./card-1.png";
 import Card2 from "./card-2.png";
-import Card3 from "./card-3.webp";
 import Card4 from "./card-4.jpg";
-import Card5 from "./card-5.jpg";
-import Card6 from "./card-6.png";
 
-// --- Data for the cards ---
+// --- Card Data ---
 const projects = [
   {
     id: 1,
@@ -38,45 +34,12 @@ const projects = [
     id: 3,
     title: "A Fulfilling Mission",
     description: [
-      "Since then, Andrew has worked with executives, founders, educators, and rising professionals.",
+      "Since then, he has worked with executives, founders, educators, and rising professionals.",
       "Over two decades, he has helped prepare speakers for investor pitches, global stages, media interviews, and elite academic admissions.",
       "His clients trust him when clarity, strategy, and presence matter most.",
     ],
-    src: Card3,
-    color: "#00b6bd",
-  },
-  {
-    id: 4,
-    title: "My Unique Specialty",
-    description: [
-      "Andrew meets people where they are—whether that’s fine-tuning one specific talk or walking alongside them through every step of a big presentation.",
-      "He’s equal parts coach, writer, and trusted second brain, helping clients feel prepared, grounded, and heard.",
-    ],
     src: Card4,
-    color: "#f4a261",
-  },
-  {
-    id: 5,
-    title: "The Core Goal",
-    description: [
-      "Andrew combines deeply personalized support with over two decades of training resources, systems, frameworks, and structures.",
-      "From speeches with built-in notes on pacing, pausing and delivery, to pdfs, audio guides, checklists, overviews, and exercises, Andrew will provide you with the resources to feel fully supported at every step.",
-    ],
-    src: Card5,
-    color: "#2a9d8f",
-  },
-  {
-    id: 6,
-    title: "Let's Connect",
-    description: [
-      "Whether you’re preparing for a single presentation or working toward a deeper transformation, Andrew offers support tailored to your needs.",
-      "He helps clients overcome challenges, fears, and sticking points with clear, practical guidance.",
-      "Whatever your goals, his commitment is the same: helping you become a more confident, compelling speaker.",
-    ],
-    src: Card6,
-    color: "#1d3557",
-    link: "https://calendly.com/speak-with-simon/discovery-session",
-    linkText: "LET’S GET STARTED",
+    color: "#00b6bd",
   },
 ];
 
@@ -87,9 +50,8 @@ export default function CardScroll() {
     offset: ["start start", "end end"],
   });
 
-  // Animate color from #cbd4e4 to #21427d
-  const bgColor = useTransform(scrollYProgress, [0, 1], ["#cbd4e4", "#21427d"]);
-  const color = useTransform(scrollYProgress, [0, 1], ["#000", "#fff"]);
+  const bgColor = useTransform(scrollYProgress, [0, 1], ["#0d0d1a", "#1f3a6c"]);
+  const color = useTransform(scrollYProgress, [0, 1], ["#fff", "#fff"]);
 
   return (
     <motion.section
@@ -97,16 +59,22 @@ export default function CardScroll() {
       ref={containerRef}
       style={{ backgroundColor: bgColor }}
     >
+      {/* Extra top space above heading, before sticky */}
+      <div className="pt-16 md:pt-24"></div>
+
+      {/* Sticky heading */}
       <motion.h1
-        className="cards-wrapper-title sticky top-0 px-8 py-6 w-full text-4xl md:text-6xl flex flex-col items-center font-extrabold text-black text-center z-[1000] "
+        className="cards-wrapper-title sticky top-0 px-8 py-6 w-full text-4xl md:text-6xl 
+                   flex flex-col items-center font-extrabold text-black text-center z-[1000]"
         style={{ backgroundColor: bgColor, color: color }}
       >
         <p>Meet Andrew Simon</p>
         <p className="text-[1rem] leading-normal mt-2 italic max-w-[30rem] md:text-xl md:mt-4 md:max-w-[1200px]">
-          Public Speaking Coach - Author - Speechwriter - Communication
-          Strategist
+          Public Speaking Coach - Author - Speechwriter - Communication Strategist
         </p>
       </motion.h1>
+
+      {/* Cards */}
       <div
         id="cards-wrapper"
         className="relative flex flex-col gap-12 items-center py-8 pb-4 md:pb-8"

@@ -1,9 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import {
-  motion,
-  useScroll,
-  AnimatePresence,
-} from "framer-motion";
+import { motion, useScroll, AnimatePresence } from "framer-motion";
 
 // --- Vimeo Video URLs ---
 const videos = [
@@ -80,6 +76,9 @@ export default function Index() {
   const [activeIndex, setActiveIndex] = useState(null);
   const isMobile = useIsMobile();
   const titleHeight = "120px";
+  const colors = {
+    lightText: "#F9FAFB",
+  };
 
   return (
     <div className="flex flex-col items-center w-full bg-[#0d0d19]">
@@ -88,15 +87,16 @@ export default function Index() {
           <div className="sticky top-0 z-20 w-full bg-[#0d0d19] p-4 flex justify-center shadow-lg">
             <h2 className="text-4xl font-bold text-white">Our Services</h2>
           </div>
-          <MobileStickyScroll services={servicesData} />
+          <MobileStickyScroll services={servicesData} colors={colors} />
         </>
       ) : (
         <>
           <div className="p-4 sm:p-10 w-full flex flex-col items-center">
-            <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6 sm:mb-10">
+            <h2 className="text-4xl sm:text-5xl font-bold text-white mb-2">
               Our Services
             </h2>
           </div>
+
           <div
             onMouseLeave={() => setActiveIndex(null)}
             className="flex md:flex-row h-auto md:h-[700px] xl:h-[850px] w-full max-w-7xl md:rounded-2xl md:overflow-hidden md:shadow-2xl"
@@ -108,6 +108,7 @@ export default function Index() {
                 isActive={activeIndex === index}
                 onHover={() => setActiveIndex(index)}
                 titleHeight={titleHeight}
+                colors={colors}
               />
             ))}
           </div>
@@ -119,7 +120,7 @@ export default function Index() {
 }
 
 // --- MOBILE SCROLL COMPONENT ---
-function MobileStickyScroll({ services }) {
+function MobileStickyScroll({ services, colors }) {
   const containerRef = useRef(null);
   const [activeSection, setActiveSection] = useState(0);
 
@@ -156,7 +157,7 @@ function MobileStickyScroll({ services }) {
             transition={{ duration: 0.4 }}
             className="absolute inset-0"
           >
-            <MobileCard service={services[activeSection]} />
+            <MobileCard service={services[activeSection]} colors={colors} />
           </motion.div>
         </AnimatePresence>
       </div>
@@ -165,7 +166,7 @@ function MobileStickyScroll({ services }) {
 }
 
 // --- MOBILE CARD COMPONENT ---
-function MobileCard({ service }) {
+function MobileCard({ service, colors }) {
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { delay: 0.2, staggerChildren: 0.25 } },
@@ -181,28 +182,26 @@ function MobileCard({ service }) {
   const toggleVideoPlayback = () => {
     const newPlayState = !isVideoPlaying;
     setIsVideoPlaying(newPlayState);
-    
+
     if (iframeRef.current) {
-      // Use Vimeo Player API to control playback without reloading
       const iframe = iframeRef.current;
       const player = new window.Vimeo.Player(iframe);
-      
+
       if (newPlayState) {
-        player.play().catch(error => {
-          console.log('Play failed:', error);
+        player.play().catch((error) => {
+          console.log("Play failed:", error);
         });
       } else {
-        player.pause().catch(error => {
-          console.log('Pause failed:', error);
+        player.pause().catch((error) => {
+          console.log("Pause failed:", error);
         });
       }
     }
   };
 
-  // Load Vimeo Player API script
   useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://player.vimeo.com/api/player.js';
+    const script = document.createElement("script");
+    script.src = "https://player.vimeo.com/api/player.js";
     script.async = true;
     document.body.appendChild(script);
 
@@ -212,10 +211,7 @@ function MobileCard({ service }) {
   }, []);
 
   return (
-    <div 
-      className="relative w-full h-full bg-black"
-      onClick={toggleVideoPlayback}
-    >
+    <div className="relative w-full h-full bg-black" onClick={toggleVideoPlayback}>
       <div className="absolute inset-0 overflow-hidden">
         <iframe
           ref={iframeRef}
@@ -244,25 +240,57 @@ function MobileCard({ service }) {
         variants={containerVariants}
       >
         <div className="h-full overflow-y-auto px-6 py-10">
-          <motion.h3
-            variants={itemVariants}
-            className="text-4xl font-bold mb-6"
-          >
+          <motion.h3 variants={itemVariants} className="text-4xl font-bold mb-2">
             {service.title}
           </motion.h3>
+
+          {/* New line below heading for mobile - NO SCALE */}
+          <motion.div
+            variants={itemVariants}
+            className="w-28 h-1 rounded-full mb-4" // Increased from w-24
+            style={{
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            }}
+          />
+
           <motion.p
             variants={itemVariants}
-            className="text-xl font-semibold mb-8"
+            className="text-xl font-semibold italic mb-4"
           >
             {service.description}
           </motion.p>
-          <ul className="list-disc list-outside space-y-5 text-lg font-medium ml-5 pb-20">
+
+          {/* Divider line - MOVED & CENTERED */}
+          <motion.div
+            variants={itemVariants}
+            className="w-28 h-1 rounded-full mb-6 mx-auto" // Increased from w-24
+            style={{
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            }}
+          />
+
+          <ul className="list-disc list-outside space-y-5 text-lg font-medium ml-5 pb-6 marker:text-[#764ba2]">
             {service.points.map((point, i) => (
               <motion.li key={i} variants={itemVariants}>
                 {point}
               </motion.li>
             ))}
           </ul>
+          {/* Button */}
+          <motion.a
+            className="font-semibold text-[0.9rem] py-2 px-5 rounded-full mt-4 sm:mt-6 shadow-lg inline-block"
+            style={{
+              backgroundImage: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              color: colors.lightText,
+            }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            href="https://calendly.com/speak-with-simon/discovery-session"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Book Your Free Session
+          </motion.a>
         </div>
       </motion.div>
     </div>
@@ -270,7 +298,7 @@ function MobileCard({ service }) {
 }
 
 // --- DESKTOP PANEL ---
-function ServicePanel({ service, isActive, onHover, titleHeight }) {
+function ServicePanel({ service, isActive, onHover, titleHeight, colors }) {
   const desktopPanelVariants = { inactive: { flex: 1 }, active: { flex: 2.5 } };
   const desktopContentVariants = {
     inactive: { y: `calc(100% - ${titleHeight})` },
@@ -287,28 +315,26 @@ function ServicePanel({ service, isActive, onHover, titleHeight }) {
   const toggleVideoPlayback = () => {
     const newPlayState = !isVideoPlaying;
     setIsVideoPlaying(newPlayState);
-    
+
     if (iframeRef.current) {
-      // Use Vimeo Player API to control playback without reloading
       const iframe = iframeRef.current;
       const player = new window.Vimeo.Player(iframe);
-      
+
       if (newPlayState) {
-        player.play().catch(error => {
-          console.log('Play failed:', error);
+        player.play().catch((error) => {
+          console.log("Play failed:", error);
         });
       } else {
-        player.pause().catch(error => {
-          console.log('Pause failed:', error);
+        player.pause().catch((error) => {
+          console.log("Pause failed:", error);
         });
       }
     }
   };
 
-  // Load Vimeo Player API script
   useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://player.vimeo.com/api/player.js';
+    const script = document.createElement("script");
+    script.src = "https://player.vimeo.com/api/player.js";
     script.async = true;
     document.body.appendChild(script);
 
@@ -361,20 +387,55 @@ function ServicePanel({ service, isActive, onHover, titleHeight }) {
           {service.title}
         </h3>
 
+        {/* New line below heading for desktop - with scale animation */}
         <motion.div
-          className="space-y-8 pt-2 px-4 pb-4 sm:pt-4 sm:px-6 sm:pb-6"
+          initial={{ scaleX: 0 }}
+          animate={isActive ? { scaleX: 1 } : { scaleX: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          style={{
+            transformOrigin: "left",
+            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+          }}
+          className="w-32 h-1 rounded-full mb-4 px-4 sm:px-6 ml-6" // Kept at w-32
+        />
+
+        <motion.div
+          className="space-y-6 pt-2 px-4 pb-4 sm:pt-4 sm:px-6 sm:pb-6"
           initial="hidden"
           animate={isActive ? "visible" : "hidden"}
           variants={desktopTextVariants}
         >
-          <p className="text-xl sm:text-2xl font-semibold">
-            {service.description}
-          </p>
-          <ul className="list-disc list-outside space-y-12 text-xl sm:text-2xl font-semibold ml-5">
+          <p className="text-xl sm:text-2xl font-semibold italic">{service.description}</p>
+          
+          {/* Divider line - MOVED & CENTERED */}
+          <div
+            className="w-32 h-1 rounded-full mx-auto" // Increased from w-24 to w-32
+            style={{
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            }}
+          />
+
+          <ul className="list-disc list-outside space-y-4 text-xl sm:text-2xl font-semibold ml-5 marker:text-[#764ba2]">
             {service.points.map((point, i) => (
               <li key={i}>{point}</li>
             ))}
           </ul>
+
+          {/* Button */}
+          <motion.a
+            className="font-semibold text-[0.9rem] py-2 px-5 rounded-full mt-4 sm:mt-6 shadow-lg inline-block"
+            style={{
+              backgroundImage: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+              color: colors.lightText,
+            }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            href="https://calendly.com/speak-with-simon/discovery-session"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Book Your Free Session
+          </motion.a>
         </motion.div>
       </motion.div>
     </motion.div>
