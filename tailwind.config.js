@@ -1,7 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   // Scan EVERY html/js/tsx file so Tailwind doesn't purge needed styles
-  content: ["./**/*.{html,js,jsx,ts,tsx}"],
+   content: [
+    './src/**/*.{js,ts,jsx,tsx}',
+    // exclude node_modules
+    '!./node_modules/**/*.{js,ts,jsx,tsx}',
+  ],
 
   theme: { extend: {} },
 
