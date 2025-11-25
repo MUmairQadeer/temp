@@ -63,7 +63,6 @@ const VimeoBackground = ({ videoUrl, title, isActive = true }) => {
   const playerRef = useRef(null);
   const [isReady, setIsReady] = useState(false);
 
-  // 1. Load Vimeo Script Globally Once
   useEffect(() => {
     if (!window.Vimeo) {
       const script = document.createElement("script");
@@ -77,11 +76,8 @@ const VimeoBackground = ({ videoUrl, title, isActive = true }) => {
     }
   }, []);
 
-  // 2. Initialize Player ONLY when script is ready AND iframe is loaded
   const handleIframeLoad = () => {
     if (!isReady || !iframeRef.current || !window.Vimeo) return;
-
-    // Prevent double init
     if (playerRef.current) return;
 
     try {
@@ -91,11 +87,8 @@ const VimeoBackground = ({ videoUrl, title, isActive = true }) => {
       player.ready().then(() => {
         player.setVolume(0);
         player.setLoop(true);
-        // Force play immediately on ready
         player.play().catch((e) => console.log("Autoplay blocked:", e));
         
-        // SAFETY KICK: Check 1 second later if it actually started. 
-        // If the browser was slow, this forces it to start.
         setTimeout(() => {
            player.getPaused().then((paused) => {
              if (paused) player.play().catch(() => {});
@@ -107,14 +100,12 @@ const VimeoBackground = ({ videoUrl, title, isActive = true }) => {
     }
   };
 
-  // Watch for script ready state to trigger load if iframe loaded first
   useEffect(() => {
     if (isReady && iframeRef.current) {
         handleIframeLoad();
     }
   }, [isReady]);
 
-  // Handle Active State Pausing (Performance)
   useEffect(() => {
     if (playerRef.current) {
         if(isActive) {
@@ -127,9 +118,8 @@ const VimeoBackground = ({ videoUrl, title, isActive = true }) => {
     <div className="absolute inset-0 overflow-hidden bg-black">
         <iframe
             ref={iframeRef}
-            onLoad={handleIframeLoad} // Trigger init when iframe is done loading
-            // Added playsinline=1 for iOS cold-load fix
-            src={`${videoUrl}&background=1&autoplay=1&loop=1&muted=1&playsinline=1`}
+            onLoad={handleIframeLoad}
+            src={`${videoUrl}&background=1&autoplay=1&loop=1&muted=1&playsinline=1&autopause=0`}
             className="absolute inset-0 w-full h-full pointer-events-none"
             frameBorder="0"
             allow="autoplay; fullscreen; picture-in-picture"
@@ -145,11 +135,10 @@ const VimeoBackground = ({ videoUrl, title, isActive = true }) => {
                 minHeight: "100%",
             }}
         />
-        <div className="absolute inset-0 bg-black/70 pointer-events-none"></div>
+        <div className="absolute inset-0 bg-black/60 pointer-events-none"></div>
     </div>
   );
 };
-
 
 // --- Hook to detect mobile ---
 function useIsMobile() {
@@ -167,22 +156,21 @@ function useIsMobile() {
 export default function Services() {
   const [activeIndex, setActiveIndex] = useState(null);
   const isMobile = useIsMobile();
-  const titleHeight = "50px";
   const colors = { lightText: "#F9FAFB" };
 
   return (
     <div className="flex flex-col items-center w-full bg-[#0d0d19]">
       {isMobile ? (
         <>
-          <div className="sticky top-0 z-20 w-full bg-[#0d0d19] py-8 flex justify-center shadow-lg">
+          <div className="relative w-full bg-[#0d0d19] pt-12 pb-14 flex justify-center shadow-lg z-30">
             <h2 className="text-4xl font-bold text-white">Our Services</h2>
           </div>
           <MobileStickyScroll services={servicesData} colors={colors} />
         </>
       ) : (
         <>
-          <div className="p-4 sm:p-10 w-full flex flex-col items-center">
-            <h2 className="text-4xl sm:text-5xl font-bold text-white mb-2">Our Services</h2>
+          <div className="p-4 sm:p-10 w-full flex flex-col items-center mb-12">
+            <h2 className="text-4xl sm:text-5xl font-bold text-white">Our Services</h2>
           </div>
 
           <div
@@ -195,7 +183,6 @@ export default function Services() {
                 service={service}
                 isActive={activeIndex === index}
                 onHover={() => setActiveIndex(index)}
-                titleHeight={titleHeight}
                 colors={colors}
               />
             ))}
@@ -237,7 +224,7 @@ function MobileStickyScroll({ services, colors }) {
       className="relative w-full"
       style={{ height: `${services.length * 100}vh` }}
     >
-      <div className="sticky top-20 h-[calc(100vh-5rem)] w-full overflow-hidden">
+      <div className="sticky top-0 h-screen w-full overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeSection}
@@ -259,7 +246,7 @@ function MobileStickyScroll({ services, colors }) {
 function MobileCard({ service, colors }) {
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { delay: 0.2, staggerChildren: 0.25 } },
+    visible: { opacity: 1, transition: { delay: 0.2, staggerChildren: 0.1 } },
   };
   const itemVariants = {
     hidden: { opacity: 0, y: 30 },
@@ -267,18 +254,17 @@ function MobileCard({ service, colors }) {
   };
 
   return (
-    <div className="relative w-full h-full bg-black flex flex-col p-4">
-      {/* Replaced raw iframe with Robust Component */}
+    <div className="relative w-full h-full bg-black flex flex-col p-6">
       <VimeoBackground videoUrl={service.hoverVideo} title={service.title} />
 
       <motion.div
-        className="relative z-10 h-full w-full flex flex-col justify-between text-white"
+        className="relative z-10 h-full w-full flex flex-col justify-center text-white"
         initial="hidden"
         animate="visible"
         variants={containerVariants}
       >
-        <div className="flex flex-col space-y-4 px-2 pt-10">
-          <motion.h3 variants={itemVariants} className="text-2xl font-bold">
+        <div className="flex flex-col space-y-4 px-1">
+          <motion.h3 variants={itemVariants} className="text-3xl font-bold">
             {service.title}
           </motion.h3>
 
@@ -294,7 +280,7 @@ function MobileCard({ service, colors }) {
             {service.description}
           </motion.p>
 
-          <ul className="list-disc list-outside space-y-8 text-base font-medium ml-4 marker:text-[#764ba2]">
+          <ul className="list-disc list-outside space-y-4 text-base font-medium ml-4 marker:text-[#764ba2]">
             {service.points.map((point, i) => (
               <motion.li key={i} variants={itemVariants}>
                 {point}
@@ -303,32 +289,38 @@ function MobileCard({ service, colors }) {
           </ul>
         </div>
 
-        <motion.a
-          className="font-semibold text-[0.9rem] py-2 px-5 rounded-full shadow-lg self-center mb-10"
-          style={{
-            backgroundImage: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-            color: colors.lightText,
-          }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          href="https://calendly.com/speak-with-simon/discovery-session"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Book Your Free Session
-        </motion.a>
+        <div className="w-full flex justify-start px-1 mt-16">
+            <motion.a
+            variants={itemVariants}
+            className="font-semibold text-[0.9rem] py-3 px-6 rounded-full shadow-lg"
+            style={{
+                backgroundImage: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                color: colors.lightText,
+            }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            href="https://calendly.com/speak-with-simon/discovery-session"
+            target="_blank"
+            rel="noopener noreferrer"
+            >
+            Book Your Free Session
+            </motion.a>
+        </div>
       </motion.div>
     </div>
   );
 }
 
 // --- DESKTOP PANEL ---
-function ServicePanel({ service, isActive, onHover, titleHeight, colors }) {
+function ServicePanel({ service, isActive, onHover, colors }) {
   const desktopPanelVariants = { inactive: { flex: 1 }, active: { flex: 2.5 } };
+  
+  // UPDATED: Set to 180px. This reveals a larger area at the bottom.
   const desktopContentVariants = {
-    inactive: { y: `calc(100% - ${titleHeight})` },
+    inactive: { y: "calc(100% - 180px)" }, 
     active: { y: 0 },
   };
+  
   const desktopTextVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { delay: 0.3, duration: 0.5 } },
@@ -336,7 +328,7 @@ function ServicePanel({ service, isActive, onHover, titleHeight, colors }) {
 
   return (
     <motion.div
-      className="relative h-full overflow-hidden cursor-pointer"
+      className="relative h-full overflow-hidden cursor-pointer group"
       initial={false}
       animate={isActive ? "active" : "inactive"}
       variants={desktopPanelVariants}
@@ -344,30 +336,35 @@ function ServicePanel({ service, isActive, onHover, titleHeight, colors }) {
       onMouseEnter={onHover}
     >
       <div className="absolute inset-0 z-0">
-         {/* Replaced raw iframe with Robust Component */}
          <VimeoBackground videoUrl={service.hoverVideo} title={service.title} isActive={isActive} />
       </div>
 
+      <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80" />
+
       <motion.div
-        className="absolute bottom-0 left-0 right-0 z-20 text-white h-full flex flex-col py-20"
+        className="absolute bottom-0 left-0 right-0 z-20 text-white h-full flex flex-col py-6"
         style={{ overflowY: "hidden" }}
         variants={desktopContentVariants}
         transition={{ duration: 0.5, ease: "easeInOut" }}
       >
-        <h3
-          className="text-3xl sm:text-4xl font-bold w-full flex items-center shrink-0 px-6"
-          style={{ height: titleHeight }}
-        >
-          {service.title}
-        </h3>
+        {/* UPDATED: 
+            1. h-[180px] matches the reveal area.
+            2. pb-10 (40px) padding at bottom. 
+            This forces the text UP, preventing it from being cut at the bottom edge.
+        */}
+        <div className="h-[180px] flex flex-col justify-end pb-10 px-6 shrink-0">
+             <h3 className="text-3xl sm:text-4xl font-bold w-full whitespace-nowrap mb-[2px]">
+                {service.title}
+             </h3>
+        </div>
 
         <motion.div
-          className="flex flex-col flex-grow pt-4 px-6 pb-6"
+          className="flex flex-col flex-grow px-6 pb-6"
           initial="hidden"
           animate={isActive ? "visible" : "hidden"}
           variants={desktopTextVariants}
         >
-          <div className="space-y-6 flex-grow">
+          <div className="space-y-4 flex-grow mt-0">
             <div
               className="w-32 h-1 rounded-full"
               style={{
@@ -386,7 +383,7 @@ function ServicePanel({ service, isActive, onHover, titleHeight, colors }) {
             </ul>
           </div>
 
-          <div className="mt-10 ">
+          <div className="mt-10 mb-10">
             <motion.a
               className="font-semibold text-[0.9rem] py-2 px-5 rounded-full shadow-lg inline-block w-fit"
               style={{
