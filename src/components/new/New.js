@@ -102,7 +102,7 @@ function StickyScrollFeature() {
   const scrollTimeout = useRef(null);
   const { scrollYProgress } = useScroll({ target: scrollRef, offset: ["start 0.1", "end 1"] });
 
-  // Map scroll to section
+  // map scroll to section
   useEffect(() => {
     const unsubscribe = scrollYProgress.onChange((latest) => {
       if (isClickScrolling) return;
@@ -113,7 +113,7 @@ function StickyScrollFeature() {
     return () => unsubscribe();
   }, [scrollYProgress, isClickScrolling]);
 
-  // Initialize Vimeo players
+  // initialize player
   const initPlayer = (index) => {
     const iframe = iframeRefs.current[index];
     if (!iframe) return;
@@ -132,7 +132,7 @@ function StickyScrollFeature() {
     }
   };
 
-  // Sync Play/Pause with active section
+  // play/pause logic
   useEffect(() => {
     players.current.forEach((p, i) => {
       if (!p) return;
@@ -144,7 +144,7 @@ function StickyScrollFeature() {
     });
   }, [activeSection]);
 
-  // Click heading to scroll logic
+  // click heading to scroll
   const handleHeadingClick = (index) => {
     setActiveSection(index);
     setIsClickScrolling(true);
@@ -162,7 +162,6 @@ function StickyScrollFeature() {
     }
   };
 
-  // Toggle play/pause on click (Video Overlay)
   const togglePlayPauseActive = async () => {
     const p = players.current[activeSection];
     if (!p) return;
@@ -181,7 +180,6 @@ function StickyScrollFeature() {
 
   return (
     <div ref={scrollRef} className="relative" style={{ height: `${featureData.length * 100}vh` }}>
-      
       <div
         className="sticky w-full min-h-screen h-auto md:h-[90vh] md:overflow-hidden overflow-visible"
         style={{
@@ -192,7 +190,8 @@ function StickyScrollFeature() {
           
           {/* LEFT COLUMN (Headings) */}
           <div className="flex flex-col justify-center py-8 md:h-[80vh] md:col-span-1">
-            <div className="flex flex-col h-full justify-between pl-4 sm:pl-12 md:pl-0 lg:pl-12">
+            {/* Added left padding alignment */}
+            <div className="flex flex-col h-full justify-between pl-4 sm:pl-8 md:pl-0 lg:pl-12">
               <div className="space-y-6 sm:space-y-10 w-fit">
                 {featureData.map((item, index) => (
                   <h2
@@ -229,6 +228,7 @@ function StickyScrollFeature() {
 
           {/* RIGHT COLUMN (Video Card) */}
           <div className="md:col-span-2 w-full flex md:h-[80vh] items-center md:justify-center">
+            {/* Height set to 60vh on mobile to ensure room for text */}
             <div className="w-full sm:w-[90%] md:w-full lg:w-[90%] min-h-[500px] h-[60vh] sm:h-[65vh] md:h-full rounded-2xl overflow-hidden shadow-2xl mx-auto relative">
               
               {/* VIDEO LAYER */}
@@ -248,8 +248,11 @@ function StickyScrollFeature() {
                       top: "50%",
                       left: "50%",
                       transform: "translate(-50%, -50%)",
-                      width: "170%", 
-                      height: "170%",
+                      // AGGRESSIVE SCALING FIX:
+                      // 400% width and height forces the iframe to cover the container
+                      // regardless of aspect ratio (tall/wide), effectively behaving like object-fit: cover
+                      width: "400%", 
+                      height: "400%",
                       pointerEvents: "none",
                       opacity: activeSection === index ? 1 : 0,
                       transition: "opacity 0.4s ease",
@@ -277,9 +280,9 @@ function StickyScrollFeature() {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.5 }}
                 >
+                  {/* PADDING FIX: px-8 on mobile, px-12 on tablet to squeeze text in */}
                   <motion.ul
-                    // UPDATED: Added heavy horizontal padding so text stays on video
-                    className="flex flex-col h-full justify-evenly px-10 sm:px-16 md:px-20 lg:px-24 text-white"
+                    className="flex flex-col h-full justify-evenly px-8 sm:px-12 md:p-8 lg:p-12 text-white"
                     variants={listVariants}
                     initial="hidden"
                     animate="visible"
