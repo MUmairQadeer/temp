@@ -190,7 +190,6 @@ function StickyScrollFeature() {
           
           {/* LEFT COLUMN (Headings) */}
           <div className="flex flex-col justify-center py-8 md:h-[80vh] md:col-span-1">
-            {/* Added left padding alignment */}
             <div className="flex flex-col h-full justify-between pl-4 sm:pl-8 md:pl-0 lg:pl-12">
               <div className="space-y-6 sm:space-y-10 w-fit">
                 {featureData.map((item, index) => (
@@ -248,11 +247,11 @@ function StickyScrollFeature() {
                       top: "50%",
                       left: "50%",
                       transform: "translate(-50%, -50%)",
-                      // AGGRESSIVE SCALING FIX:
-                      // 400% width and height forces the iframe to cover the container
-                      // regardless of aspect ratio (tall/wide), effectively behaving like object-fit: cover
-                      width: "400%", 
-                      height: "400%",
+                      // ✅ FINAL FIX: Uses 200% scale + min-width/height to guarantee cover without stretching.
+                      minWidth: "100%", 
+                      minHeight: "100%",
+                      width: "200%", 
+                      height: "200%", 
                       pointerEvents: "none",
                       opacity: activeSection === index ? 1 : 0,
                       transition: "opacity 0.4s ease",
@@ -280,7 +279,6 @@ function StickyScrollFeature() {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.5 }}
                 >
-                  {/* PADDING FIX: px-8 on mobile, px-12 on tablet to squeeze text in */}
                   <motion.ul
                     className="flex flex-col h-full justify-evenly px-8 sm:px-12 md:p-8 lg:p-12 text-white"
                     variants={listVariants}
