@@ -9,6 +9,7 @@ const colors = {
   headText: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
 };
 
+// Autoplay, muted, looped, and inline parameters required for mobile autoplay
 const vimeoParams =
   "&autoplay=1&muted=1&loop=1&playsinline=1&controls=0&title=0&byline=0&portrait=0&quality=540p";
 
@@ -121,6 +122,7 @@ function StickyScrollFeature() {
 
     try {
       const p = new Player(iframe, { autopause: false });
+      // Set volume to 0 to enable mobile autoplay
       p.setVolume(0).catch(() => { });
       players.current[index] = p;
 
@@ -183,7 +185,9 @@ function StickyScrollFeature() {
       <div
         className="sticky w-full min-h-screen h-auto md:h-[90vh] md:overflow-hidden overflow-visible"
         style={{
-          backgroundColor: colors.primaryBlue, color: colors.lightText, top: "10vh",
+          backgroundColor: colors.primaryBlue, 
+          color: colors.lightText, 
+          top: "5vh", // ✅ FIX: Moved the sticky element higher (from 10vh) for better timing before transition
         }}
       >
         <div className="max-w-7xl mx-auto h-full md:grid md:grid-cols-3 gap-6 md:gap-8 lg:gap-24 md:items-center px-4 md:px-6 lg:px-8">
@@ -227,7 +231,6 @@ function StickyScrollFeature() {
 
           {/* RIGHT COLUMN (Video Card) */}
           <div className="md:col-span-2 w-full flex md:h-[80vh] items-center md:justify-center">
-            {/* Height set to 60vh on mobile to ensure room for text */}
             <div className="w-full sm:w-[90%] md:w-full lg:w-[90%] min-h-[500px] h-[60vh] sm:h-[65vh] md:h-full rounded-2xl overflow-hidden shadow-2xl mx-auto relative">
               
               {/* VIDEO LAYER */}
@@ -238,7 +241,8 @@ function StickyScrollFeature() {
                     ref={(el) => setIframeRef(el, index)}
                     src={item.videoSrc}
                     title={`vimeo-${index}`}
-                    allow="autoplay; fullscreen; muted; loop; playsinline"
+                    // Allow autoplay, muted, and playsinline for mobile compatibility
+                    allow="autoplay; fullscreen; muted; loop; playsinline" 
                     frameBorder="0"
                     loading="eager"
                     onLoad={() => initPlayer(index)}
@@ -247,7 +251,7 @@ function StickyScrollFeature() {
                       top: "50%",
                       left: "50%",
                       transform: "translate(-50%, -50%)",
-                      // ✅ FINAL FIX: Uses 200% scale + min-width/height to guarantee cover without stretching.
+                      // Video Cover Fix
                       minWidth: "100%", 
                       minHeight: "100%",
                       width: "200%", 
